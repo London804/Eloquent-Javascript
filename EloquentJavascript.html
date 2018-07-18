@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<title>Eloquent Javascript</title>
+		<!-- Required meta tags -->
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<script>
+
+			// Chapter 2 
+			//Looping a Triangle
+			function triangle () {
+				let arr ='#';
+
+				for(let i = 0; i < 6; i++) {
+					console.log(arr);
+					arr += "#";
+				}
+				console.log(arr);
+			}
+			triangle();
+
+			// fizzBizz
+			function FizzBuzz() {
+				var arr = 100;
+				for(let i = 0; i <= arr; i++) {
+					if(i % 3 === 0) {
+						var x = console.log('Fizz');
+					} else if(i % 5 === 0) {
+						var y = console.log('Buzz');
+					} else if(i % 3 === 0 && i % 5 === 0) {
+						console.log('FizzBuzz');
+					} else {
+						console.log(i);
+					}
+				}
+			}
+			FizzBuzz();
+
+			// Chessboard
+			function chessBoard() {
+				let size = 8;
+				let board = "";
+
+				for (let y = 0; y < size; y++) {
+				  for (let x = 0; x < size; x++) {
+				    if ((x + y) % 2 == 0) {
+				      board += " ";
+				    } else {
+				      board += "#";
+				    }
+				  }
+				  board += "\n"; // this creates a new line after every inner loop of 4 '#' and 4 ' ';
+				}
+				console.log(board);
+			}
+
+			chessBoard();
+
+			// Chapter 3 Functions
+
+			// Consider this puzzle: by starting from the number 1 and repeatedly either adding 5 or multiplying by 3, 
+			// an infinite set of numbers can be produced. How would you write a function that, given a number, 
+			// tries to find a sequence of such additions and multiplications that produces that number?
+
+			function findSolution(target) {
+			  function find(current, history) {
+			    if (current == target) {
+			    	console.log('history', history);
+			      return history;
+			    } else if (current > target) {
+			      return null;
+			    } else {
+			      return find(current + 5, `(${history} + 5)`) ||
+			             find(current * 3, `(${history} * 3)`);
+			    }
+			  }
+			  return find(1, "1");
+			}
+
+			console.log('findSolution', findSolution(24));
+			// → (((1 * 3) + 5) * 3)
+
+			// e.g.
+			function printZeroPaddedWithLabel(number, label) {
+			  let numberString = String(number);
+			  while (numberString.length < 3) {
+			    numberString = "0" + numberString;
+			  }
+			  console.log(`${numberString} ${label}`);
+			}
+
+			function printFarmInventory(cows, chickens, pigs) {
+			  printZeroPaddedWithLabel(cows, "Cows"); // I don't understand why the string is Cows as opposed to being the second parameter.  
+			  										 // It's because printZeroPadded With Label is only takes two parameters and you are assigning it from printFarmInventory
+			  printZeroPaddedWithLabel(chickens, "Chickens");
+			  printZeroPaddedWithLabel(pigs, "Pigs");
+			}
+
+			printFarmInventory(7, 11, 3);
+
+			// slightly cleaner version
+
+			// function zeroPad(number, width) {
+			//   let string = String(number);
+			//   while (string.length < width) {
+			//     string = "0" + string;
+			//   }
+			//   return string;
+			// }
+
+			// function printFarmInventory(cows, chickens, pigs) {
+			//   console.log(`${zeroPad(cows, 3)} Cows`);
+			//   console.log(`${zeroPad(chickens, 3)} Chickens`);
+			//   console.log(`${zeroPad(pigs, 3)} Pigs`);
+			// }
+
+			// Minimum
+			function Minimum(num, num2) {
+				return Math.min(num, num2);
+			}
+
+			console.log(Minimum(4,0));
+
+			// Recursion
+			// The example wanted me to exceed the call stack, but calling it recursively but that's silly
+
+			function recursion(num) {
+				if (num % 2 === 0) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+
+			console.log(recursion(-8));
+
+			// Bean Counting
+
+			// first part 
+
+			function countBs(arg) {
+				var b = "B";
+				var count = 0;
+
+				for(let i = 0; i < arg.length; i++) {
+					if(arg[i] === b) {
+						count++;
+					}
+				}
+				return count;
+			}
+
+
+			console.log(countBs('BBBback'));
+
+			function counts(arg, letter) {
+				var count = 0;
+				console.log(letter);
+
+				for(let i = 0; i < arg.length; i++) {
+					if(arg[i] === letter) {
+						count++;
+					}
+				}
+				return count;
+			}
+
+			function countChar(arg, letter) {
+				return counts(arg, letter);
+
+			}
+
+			console.log(countChar('K5', "K"));
+
+
+			// Chapter 4
+			// The Sum of Range
+
+			function range(start, end, multiplier) {
+				var arr = [];
+				for(let i = start; i <= end; i++) {
+					console.log(arr.push(i * multiplier));
+
+				}
+				return arr;
+			}
+
+			console.log(range(1,10,2));
+
+			function sum(nums) {
+				const arr = nums;
+				const reducer = (value1, value2) => value1 + value2;
+				return nums.reduce(reducer);
+			}
+
+			// book's version of answer 
+			// function sum(array) {
+			//   let total = 0;
+			//   for (let value of array) {
+			//     total += value;
+			//   }
+			//   return total;
+			// }
+
+			console.log(sum([10,10,10,10,10,5]));
+
+			// Reversing an array (without .reverse)
+
+			function reverse(arr) {
+				var output = [];
+				while(arr.length){
+					output.push(arr.pop());
+				}
+				return output;
+			}
+
+			console.log('reverse', reverse([1,2,3,4,5]));
+
+			function reverseArrayInPlace(array) {
+			  for (let i = 0; i < Math.floor(array.length / 2); i++) {
+			    let old = array[i];
+			    array[i] = array[array.length - 1 - i];
+			    array[array.length - 1 - i] = old;
+			  }
+			  return array;
+			}
+
+			console.log( 'reverse in place', reverseArrayInPlace([1,2,3,4,5]));
+
+			// A List
+			let list = {
+			  value: 1,
+			  rest: {
+			    value: 2,
+			    rest: {
+			      value: 3,
+			      rest: null
+			    }
+			  }
+			};
+
+			function aList(array) {
+				let list = null;
+				for (let i = array.length - 1; i >= 0; i--) {
+					list = {value: array[i], rest: list};
+				}
+				return list;
+			}
+
+			console.log('aList', aList([10, 20]));
+
+			function listToArray(list) {
+				let array = [];
+				for (let node = list; node; node = node.rest) {
+					array.push(node.value);
+				}
+				return array;
+			}
+
+			function prepend(value, list) {
+				return {value, rest: list};
+			}
+
+			function nth(list, n) {
+				if (!list) return undefined;
+			  	else if (n == 0) return list.value;
+			 	else return nth(list.rest, n - 1);
+			}
+
+
+			// deep equal
+
+			function deepEqual(a, b) {
+				if (a === b) return true;
+
+				if (a == null || typeof a != "object" ||
+				  b == null || typeof b != "object") return false;
+
+				let keysA = Object.keys(a), keysB = Object.keys(b);
+
+				if (keysA.length != keysB.length) return false;
+
+				for (let key of keysA) {
+				if (!keysB.includes(key) || !deepEqual(a[key], b[key])) return false;
+				}
+
+				return true;
+			}
+			
+			let obj = {here: {is: "an"}, object: 2};
+			console.log(deepEqual(obj, obj));
+			// → true
+			console.log(deepEqual(obj, {here: 1, object: 2}));
+			// → false
+			console.log(deepEqual(obj, {here: {is: "an"}, object: 2}));
+			// → true
+
+			// Chapter 5
+			// I was looking how filters works in Angularjs and I saw that we need to send 2 sets of parentheses.
+			// What does it means and how do we handle it with JavaScript?
+			// Answer: It means that the first function ($filter) returns another function and then that returned function is called immediately. For Example:
+
+			function add(x){
+			  return function(y){
+			    return x + y;
+			  };
+			}
+
+			var addTwo = add(2);
+
+			addTwo(4) === 6; // true
+			add(3)(4) === 7; // true
+
+			// another example
+			function noisy(f) {
+			  return (...args) => {
+			    console.log("calling with", args);
+			    let result = f(...args);
+			    console.log("called with", args, ", returned", result);
+			    return result;
+			  };
+			}
+			noisy(Math.min)(3, 2, 1);
+			// → calling with [3, 2, 1]
+			// → called with [3, 2, 1] , returned 1
+
+			// Flatten
+			let arrays = [[1, 2, 3], [4, 5], [6]].reduce(
+				function(a, b) {
+					return a.concat(b);
+				}
+				// es6 version
+				// (a,b) => a.concat(b)
+			);	
+
+			console.log(arrays);
+
+			// Your Own Loop
+			function loop(start, test, update, body) {
+			  for (let value = start; test(value); value = update(value)) {
+			    body(value);
+			  }
+			}
+
+			loop(3, n => n > 0, n => n - 1, console.log);
+
+			// Everything
+
+			function every(array, predicate) {
+				for (let element of array) {
+					console.log(element);
+				    if (!predicate(element)) return false;
+				  }
+				return true;
+			}
+
+			function every2(array, predicate) {
+				// .some() method tests whether at least one element in the array passes the test implemented by the provided function.
+			  	return !array.some(element => !predicate(element));
+
+			}
+
+			console.log(every([1, 3, 5], n => n < 10));
+			// → true
+			console.log(every([2, 4, 16], n => n < 10));
+			// → false
+			console.log(every([], n => n < 10));
+			// → true
+
+			var text = [{
+				name: "Coptic",
+				ranges: [[994, 1008], [11392, 11508], [11513, 11520]],
+				direction: "ltr",
+				year: -200,
+				living: false,
+				link: "https://en.wikipedia.org/wiki/Coptic_alphabet"
+			}];
+
+
+			// for...in example
+			function dominant(items) {
+				for(let item of items) {
+					console.log('item direction', item.direction);
+					if(item.direction === 'ltr') {
+						return 'ltr';
+					} else {
+						return 'rtl';
+					}
+				}
+			}
+
+			console.log('dominant', dominant(text));
+
+			// Object.keys also works
+ 			for (let key of Object.keys(text)) {
+ 				console.log('Object keys direction', text.direction);
+  
+			  // console.log('Object Keys', `${key}: ${text[key]}`);
+			}
+
+
+			var object1 = {a: 1, b: 2, c: 3};
+			var string1 = "";
+
+			function loopObj() {
+				for (var property1 in object1) {
+				  console.log(string1 = string1 + object1[property1]);
+				}
+ 			}
+ 	
+ 			loopObj();
+
+ 			
+					
+			// For Dominant Writing Direction see https://eloquentjavascript.net/code/#5.4
+
+
+
+
+
+		</script>
+
+	</head>
+	<body>
+		
+	</body>
+</html>
