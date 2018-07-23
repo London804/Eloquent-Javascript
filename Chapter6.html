@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<title>Chapter 6 The Secret Life of Objects</title>
+		<!-- Required meta tags -->
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<script>
+
+			// Chapter 6 The Secret Life of Objects
+			class Rabbit {
+				constructor(type) {
+					this.type = type;
+				}
+				speak(line) {
+					console.log(`The ${this.type} rabbit says '${line}'`);
+				}
+			}
+
+			let killerRabbit = new Rabbit("killer");
+			let blackRabbit = new Rabbit("black");
+
+			function speak(line) {
+			  return `The ${this.type} rabbit says '${line}'`;
+			}
+			let whiteRabbit = {type: "white", speak};
+			let hungryRabbit = {type: "hungry", speak};
+			console.log('whiteRabbit', whiteRabbit.speak('hi'));
+
+			// Like function, class can be used both in statements and in expressions. When used as an expression, it doesn’t define a binding but just produces the constructor as a value. You are allowed to omit the class name in a class expression.
+			let object = new class { getWord() { return "hello"; } };
+			console.log(object.getWord());
+			// → hello
+
+
+			// class
+			var Matrix = class Matrix {
+			  constructor(width, height, element = (x, y) => undefined) {
+			    this.width = width;
+			    this.height = height;
+			    this.content = [];
+
+			    for (let y = 0; y < height; y++) {
+			      for (let x = 0; x < width; x++) {
+			        this.content[y * width + x] = element(x, y);
+			      }
+			    }
+			  }
+
+			  get(x, y) {
+			    return this.content[y * this.width + x];
+			  }
+			  set(x, y, value) {
+			    this.content[y * this.width + x] = value;
+			  }
+			};
+
+			var trilogy = Object.create(Matrix);
+			trilogy.set = [15, 19];
+			console.log(trilogy);
+	
+			var MatrixIterator = class MatrixIterator {
+			  constructor(matrix) {
+			    this.x = 0;
+			    this.y = 0;
+			    this.matrix = matrix;
+			  }
+
+			  next() {
+			    if (this.y == this.matrix.height) return {done: true};
+
+			    let value = {x: this.x,
+			                 y: this.y,
+			                 value: this.matrix.get(this.x, this.y)};
+			    this.x++;
+			    if (this.x == this.matrix.width) {
+			      this.x = 0;
+			      this.y++;
+			    }
+			    return {value, done: false};
+			  }
+			};
+
+			Matrix.prototype[Symbol.iterator] = function() {
+			  return new MatrixIterator(this);
+			};
+
+
+			class Temperature {
+			  constructor(celsius) {
+			    this.celsius = celsius;
+			  }
+			  get fahrenheit() {
+			    return this.celsius * 1.8 + 32;
+			  }
+			  set fahrenheit(value) {
+			    this.celsius = (value - 32) / 1.8;
+			  }
+
+			  static fromFahrenheit(value) {
+			    return new Temperature((value - 32) / 1.8);
+			  }
+			}
+
+			let temp = new Temperature(22);
+			console.log(temp.fahrenheit);
+			// → 71.6
+			temp.fahrenheit = 86; 
+			console.log(temp.celsius); // returns the getter setter because I accessed the property
+
+			// ES5 prototype class
+			function VecX(x,y) {
+				this.x = x;
+				this.y = y;
+
+				VecX.prototype.plus = function(other) {
+					return new VecX((this.x + other.x), (this.y + other.y));
+				};
+
+				VecX.prototype.minus = function(other) {
+					return new VecX((this.x - other.x), (this.y - other.y));
+				};
+
+				VecX.prototype = {
+					get length() {
+						return Math.sqrt(this.x * this.x + this.y * this.y);
+					}
+				};
+			}
+
+			console.log(new VecX(1, 2).plus(new VecX(2, 3)));
+			// → Vec{x: 3, y: 5}
+			console.log(new VecX(1, 2).minus(new VecX(2, 3)));
+			// → Vec{x: -1, y: -1}
+			console.log(new VecX(3, 4).length);
+			// 5
+
+			// A Vector Type
+			class Vec {
+				constructor(x,y) {
+					this.x = x;
+					this.y = y;
+				}
+
+				plus(other) {
+					return new Vec((this.x + other.x), (this.y + other.y));
+				}
+
+				minus(other) {
+					return new Vec((this.x - other.x), (this.y - other.y));
+				}
+
+				get length() {
+					return Math.sqrt(this.x * this.x + this.y * this.y);
+				}
+			}
+			
+			console.log(new Vec(1, 2).plus(new Vec(2, 3)));
+			// → Vec{x: 3, y: 5}
+			console.log(new Vec(1, 2).minus(new Vec(2, 3)));
+			// → Vec{x: -1, y: -1}
+			console.log(new Vec(3, 4).length);
+			// 5
+
+			
+			// Groups
+			class Group {
+				constructor() {
+					this.members = [];
+				}
+
+				add(value) {
+				    if (!this.has(value)) {
+				      this.members.push(value);
+				    }
+				}
+				delete(value) {
+				    this.members = this.members.filter(v => v !== value); // You are returning an array that is not equal to the value being passed.
+				}
+
+				has(value) {
+				    return this.members.includes(value);
+				}
+
+				static from(collection) {
+				    let group = new Group();
+				    for (let value of collection) {
+				      group.add(value);
+				    }
+				    return group;
+				}
+
+				// this is added for iterable Groups
+				[Symbol.iterator]() {
+				    return new GroupIterator(this);
+				}
+			}
+
+			let group = Group.from([10, 20]);
+			console.log('Group', group.has(10));
+			// → true
+			console.log(group.has(30));
+			// → false
+			group.add(10);
+			group.delete(10);
+			console.log(group.has(10));
+
+			// Iterable Groups
+			class GroupIterator {
+			  constructor(group) {
+			    this.group = group;
+			    this.position = 0;
+			  }
+
+			  next() {
+			    if (this.position >= this.group.members.length) {
+			      return {done: true};
+			    } else {
+			      let result = {value: this.group.members[this.position],
+			                    done: false};
+			      this.position++;
+			      return result;
+			    }
+			  }
+			}
+
+			for (let value of Group.from(["a", "b", "c"])) {
+			  console.log(value);
+			}	
+
+			// Borrowing A Method
+			let map = {one: true, two: true, hasOwnProperty: true};
+
+			// Fix this call
+			console.log(Object.prototype.hasOwnProperty.call(map, "one"));
+			// → true
+
+
+
+
+						
+
+
+					
+
+
+
+
+		</script>
+
+	</head>
+	<body>
+		
+	</body>
+</html>

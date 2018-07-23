@@ -189,7 +189,6 @@
 			console.log(range(1,10,2));
 
 			function sum(nums) {
-				const arr = nums;
 				const reducer = (value1, value2) => value1 + value2;
 				return nums.reduce(reducer);
 			}
@@ -412,8 +411,96 @@
  			loopObj();
 
  			
-					
 			// For Dominant Writing Direction see https://eloquentjavascript.net/code/#5.4
+
+			// Chapter 6 The Secret Life of Objects
+			class Rabbit {
+				constructor(type) {
+					this.type = type;
+				}
+				speak(line) {
+					console.log(`The ${this.type} rabbit says '${line}'`);
+				}
+			}
+
+			let killerRabbit = new Rabbit("killer");
+			let blackRabbit = new Rabbit("black");
+
+			// class
+
+			var Matrix = class Matrix {
+			  constructor(width, height, element = (x, y) => undefined) {
+			    this.width = width;
+			    this.height = height;
+			    this.content = [];
+
+			    for (let y = 0; y < height; y++) {
+			      for (let x = 0; x < width; x++) {
+			        this.content[y * width + x] = element(x, y);
+			      }
+			    }
+			  }
+
+			  get(x, y) {
+			    return this.content[y * this.width + x];
+			  }
+			  set(x, y, value) {
+			    this.content[y * this.width + x] = value;
+			  }
+			};
+
+			var trilogy = Object.create(Matrix);
+			trilogy.set = [15, 19];
+			console.log(trilogy);
+	
+			var MatrixIterator = class MatrixIterator {
+			  constructor(matrix) {
+			    this.x = 0;
+			    this.y = 0;
+			    this.matrix = matrix;
+			  }
+
+			  next() {
+			    if (this.y == this.matrix.height) return {done: true};
+
+			    let value = {x: this.x,
+			                 y: this.y,
+			                 value: this.matrix.get(this.x, this.y)};
+			    this.x++;
+			    if (this.x == this.matrix.width) {
+			      this.x = 0;
+			      this.y++;
+			    }
+			    return {value, done: false};
+			  }
+			};
+
+			Matrix.prototype[Symbol.iterator] = function() {
+			  return new MatrixIterator(this);
+			};
+
+
+			class Temperature {
+			  constructor(celsius) {
+			    this.celsius = celsius;
+			  }
+			  get fahrenheit() {
+			    return this.celsius * 1.8 + 32;
+			  }
+			  set fahrenheit(value) {
+			    this.celsius = (value - 32) / 1.8;
+			  }
+
+			  static fromFahrenheit(value) {
+			    return new Temperature((value - 32) / 1.8);
+			  }
+			}
+
+			let temp = new Temperature(22);
+			console.log(temp.fahrenheit);
+			// → 71.6
+			temp.fahrenheit = 86;
+			console.log(temp.celsius);
 
 
 
